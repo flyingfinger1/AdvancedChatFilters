@@ -9,7 +9,6 @@ package io.github.darkkronicle.advancedchatfilters.filters.processors;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.text2speech.Narrator;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -33,9 +32,9 @@ import io.github.darkkronicle.advancedchatcore.util.Colors;
 import io.github.darkkronicle.advancedchatcore.util.SearchResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -53,7 +52,7 @@ public class NarratorProcessor implements IMatchProcessor, IScreenSupplier, IJso
         @Override
         public io.github.darkkronicle.Konstruct.parser.Result parse(ParseContext context, List<Node> input) {
             io.github.darkkronicle.Konstruct.parser.Result r1 = Function.parseArgument(context, input, 0);
-            Narrator.getNarrator().say(r1.getContent().getString(), false, 1);
+            Minecraft.getInstance().getNarrator().saySystemNow(r1.getContent().getString());
             return io.github.darkkronicle.Konstruct.parser.Result.success(new NullObject());
         }
 
@@ -73,9 +72,9 @@ public class NarratorProcessor implements IMatchProcessor, IScreenSupplier, IJso
                     new ConfigString(translate("message"), "$1", translate("info.message")));
 
     @Override
-    public Result processMatches(Text text, Text unfiltered, SearchResult search) {
+    public Result processMatches(Component text, Component unfiltered, SearchResult search) {
         String content = search.getGroupReplacements(message.config.getStringValue(), 0);
-        Narrator.getNarrator().say(content, false, 1);
+        Minecraft.getInstance().getNarrator().saySystemNow(content);
         return Result.getFromBool(true);
     }
 
@@ -105,9 +104,9 @@ public class NarratorProcessor implements IMatchProcessor, IScreenSupplier, IJso
         private GuiTextFieldGeneric textField;
 
         @Override
-        public void close() {
+        public void onClose() {
             save();
-            super.close();
+            super.onClose();
         }
 
         public SenderScreen(Screen parent) {
@@ -122,7 +121,7 @@ public class NarratorProcessor implements IMatchProcessor, IScreenSupplier, IJso
         }
 
         public void save() {
-            message.config.setValueFromString(textField.getText());
+            message.config.setValueFromString(textField.getValue());
         }
 
         private int getWidth() {
@@ -143,9 +142,9 @@ public class NarratorProcessor implements IMatchProcessor, IScreenSupplier, IJso
             y += this.addLabel(x, y, message.config) + 1;
             textField =
                     new GuiTextFieldGeneric(
-                            x, y, getWidth(), 20, MinecraftClient.getInstance().textRenderer);
+                            x, y, getWidth(), 20, Minecraft.getInstance().font);
             textField.setMaxLength(64000);
-            textField.setText(message.config.getStringValue());
+            textField.setValue(message.config.getStringValue());
             this.addTextField(textField, null);
         }
 

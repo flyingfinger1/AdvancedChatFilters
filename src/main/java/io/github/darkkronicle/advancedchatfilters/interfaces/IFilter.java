@@ -11,7 +11,7 @@ import io.github.darkkronicle.advancedchatcore.interfaces.IMessageFilter;
 import io.github.darkkronicle.advancedchatcore.util.Color;
 import io.github.darkkronicle.advancedchatcore.util.SearchResult;
 import io.github.darkkronicle.advancedchatfilters.filters.ParentFilter;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public interface IFilter extends IMessageFilter {
      */
     @Override
     @Deprecated
-    default Optional<Text> filter(Text text) {
+    default Optional<Component> filter(Component text) {
         return Optional.empty();
     }
 
@@ -48,6 +48,6 @@ public interface IFilter extends IMessageFilter {
      * @param search Match results
      * @return Modified text. If empty it won't modify the current text.
      */
-    Optional<Text> filter(
-            ParentFilter filter, Text text, Text unfiltered, SearchResult search);
+    Optional<Component> filter(
+            ParentFilter filter, Component text, Component unfiltered, SearchResult search);
 }

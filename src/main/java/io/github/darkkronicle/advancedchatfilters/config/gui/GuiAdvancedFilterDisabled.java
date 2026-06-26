@@ -11,34 +11,34 @@ import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.advancedchatcore.util.Colors;
 import io.github.darkkronicle.advancedchatcore.util.StyleFormatter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuiAdvancedFilterDisabled extends GuiBase {
 
-    private final List<OrderedText> warning;
+    private final List<FormattedCharSequence> warning;
 
     public GuiAdvancedFilterDisabled(Screen parent) {
         this.title = StringUtils.translate("advancedchatfilters.screen.warning");
         setParent(parent);
-        MutableText text = Text.literal(StringUtils.translate("advancedchatfilters.warning.advancedfilters"));
+        MutableComponent text = Component.literal(StringUtils.translate("advancedchatfilters.warning.advancedfilters"));
         warning = new ArrayList<>();
-        MinecraftClient client = MinecraftClient.getInstance();
-        int width = client.getWindow().getScaledWidth();
-        for (Text t :
+        Minecraft client = Minecraft.getInstance();
+        int width = client.getWindow().getGuiScaledWidth();
+        for (Component t :
                 StyleFormatter.wrapText(
-                        client.textRenderer, width - 100, StyleFormatter.formatText(text))) {
-            warning.add(t.asOrderedText());
+                        client.font, width - 100, StyleFormatter.formatText(text))) {
+            warning.add(t.getVisualOrderText());
         }
     }
 
@@ -61,19 +61,19 @@ public class GuiAdvancedFilterDisabled extends GuiBase {
     }
 
     @Override
-    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-        super.render(drawContext, mouseX, mouseY, partialTicks);
-        if (client == null) return;
+    protected void drawContents(GuiContext ctx, int mouseX, int mouseY, float partialTicks) {
+        super.drawContents(ctx, mouseX, mouseY, partialTicks);
+        if (this.mc == null) return;
 
-        int width = client.getWindow().getScaledWidth();
+        int width = this.mc.getWindow().getGuiScaledWidth();
         int y = 100;
-        for (OrderedText warn : warning) {
-            drawContext.drawCenteredTextWithShadow(client.textRenderer,
+        for (FormattedCharSequence warn : warning) {
+            ctx.drawCenteredString(this.font,
                     warn,
                     width / 2,
                     y,
                     Colors.getInstance().getColorOrWhite("white").color());
-            y += client.textRenderer.fontHeight + 2;
+            y += this.font.lineHeight + 2;
         }
     }
 

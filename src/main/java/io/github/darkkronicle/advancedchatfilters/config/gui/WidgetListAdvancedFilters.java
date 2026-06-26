@@ -13,8 +13,10 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import io.github.darkkronicle.advancedchatfilters.scripting.ScriptFilter;
 import io.github.darkkronicle.advancedchatfilters.scripting.ScriptManager;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import fi.dy.masa.malilib.render.GuiContext;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,19 +51,19 @@ public class WidgetListAdvancedFilters
     }
 
     @Override
-    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-        super.render(drawContext, mouseX, mouseY, partialTicks);
+    public void drawContents(GuiContext ctx, int mouseX, int mouseY, float partialTicks) {
+        super.drawContents(ctx, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public boolean onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public boolean onMouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
         clearTextFieldFocus();
-        return super.onMouseClicked(mouseX, mouseY, mouseButton);
+        return super.onMouseClicked(mouseButtonEvent, doubleClick);
     }
 
     protected void clearTextFieldFocus() {
         for (TextFieldWrapper<? extends GuiTextFieldGeneric> field : this.textFields) {
-            GuiTextFieldGeneric textField = field.getTextField();
+            GuiTextFieldGeneric textField = field.textField();
 
             if (textField.isFocused()) {
                 textField.setFocused(false);
@@ -71,13 +73,13 @@ public class WidgetListAdvancedFilters
     }
 
     @Override
-    public boolean onKeyTyped(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyTyped(KeyEvent keyEvent) {
         for (WidgetAdvancedFilterEntry widget : this.listWidgets) {
-            if (widget.onKeyTyped(keyCode, scanCode, modifiers)) {
+            if (widget.onKeyTyped(keyEvent)) {
                 return true;
             }
         }
-        return super.onKeyTyped(keyCode, scanCode, modifiers);
+        return super.onKeyTyped(keyEvent);
     }
 
     @Override

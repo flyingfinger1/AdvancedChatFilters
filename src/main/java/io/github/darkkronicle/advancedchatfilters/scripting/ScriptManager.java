@@ -14,13 +14,14 @@ import delight.nashornsandbox.NashornSandbox;
 import delight.nashornsandbox.NashornSandboxes;
 import fi.dy.masa.malilib.util.FileUtils;
 import io.github.darkkronicle.advancedchatcore.interfaces.IMessageFilter;
+import io.github.darkkronicle.advancedchatfilters.AdvancedChatFilters;
 import io.github.darkkronicle.advancedchatfilters.config.FiltersConfigStorage;
 import lombok.Getter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +55,8 @@ public class ScriptManager implements IMessageFilter {
     private void setupEngine() {
         engine = NashornSandboxes.create();
         // Restrict classes. Text is used for filters.
-        engine.allow(Text.class);
-        engine.allow(MutableText.class);
+        engine.allow(Component.class);
+        engine.allow(MutableComponent.class);
         engine.allow(Style.class);
 
         // Ensure no massive memory leaks. Stuff really shouldn't take over a second to happen
@@ -77,8 +78,17 @@ public class ScriptManager implements IMessageFilter {
             // Do ***not*** evaluate any code unless this is turned on.
             return;
         }
-        // Setup sandbox settings as safety measures.
-        setupEngine();
+        // Setup sandbox settings as safety measures. Nashorn was removed from the JDK in Java 15+
+        // and is not bundled, so guard the engine creation: if Nashorn (or the sandbox) is
+        // unavailable, disable JS filters gracefully instead of crashing the game.
+        try {
+            setupEngine();
+        } catch (Throwable e) {
+            AdvancedChatFilters.LOGGER.error(
+                    "Couldn't initialise the JavaScript (Nashorn) engine; advanced filters disabled", e);
+            engine = null;
+            return;
+        }
         unimportedFilters = new ArrayList<>();
         filters = new ArrayList<>();
 
@@ -153,9 +163,9 @@ public class ScriptManager implements IMessageFilter {
     }
 
     @Override
-    public Optional<Text> filter(Text text) {
-        if (!FiltersConfigStorage.ADVANCED_ON.config.getBooleanValue()) {
-            // Do ***not*** evaluate any code unless this is turned on.
+    public Optional<Component> filter(Component text) {
+        if (!FiltersConfigStorage.ADVANCED_ON.config.getBooleanValue() || engine == null) {
+            // Do ***not*** evaluate any code unless this is turned on (and the engine actually loaded).
             return Optional.empty();
         }
         for (ScriptFilter filter : filters) {

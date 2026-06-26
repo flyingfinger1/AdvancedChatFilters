@@ -20,7 +20,7 @@ import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.advancedchatfilters.FiltersHandler;
 import io.github.darkkronicle.advancedchatfilters.config.Filter;
 import io.github.darkkronicle.advancedchatfilters.config.FiltersConfigStorage;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 /** Screen for importing and exporting {@link Filter} */
 public class SharingScreen extends GuiBase {
@@ -45,15 +45,15 @@ public class SharingScreen extends GuiBase {
     public void init() {
         int x = this.width / 2 - 150;
         int y = 50;
-        text = new GuiTextFieldGeneric(x, y, 300, 20, client.textRenderer);
+        text = new GuiTextFieldGeneric(x, y, 300, 20, this.font);
         y -= 24;
         text.setMaxLength(12800);
         if (starting != null) {
-            text.setText(starting);
+            text.setValue(starting);
             text.setFocused(true);
         }
         text.setFocused(true);
-        text.setDrawsBackground(true);
+        text.setBordered(true);
         text.setEditable(true);
         text.setFocused(true);
         this.addTextField(text, null);
@@ -95,16 +95,14 @@ public class SharingScreen extends GuiBase {
         @Override
         public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
             try {
-                if (parent.text.getText().equals("")) {
+                if (parent.text.getValue().equals("")) {
                     throw new NullPointerException("Message can't be blank!");
                 }
                 if (type == Type.IMPORT_FILTER) {
                     Filter.FilterJsonSave filterSave = new Filter.FilterJsonSave();
-                    // If you don't use deprecated it won't work
                     Filter filter =
                             filterSave.load(
-                                    new JsonParser()
-                                            .parse(parent.text.getText())
+                                    JsonParser.parseString(parent.text.getValue())
                                             .getAsJsonObject());
                     if (filter == null) {
                         throw new NullPointerException("Filter is null!");
