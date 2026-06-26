@@ -20,7 +20,6 @@ import java.util.Optional;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
-import org.apache.logging.log4j.Level;
 
 /** Filter used for replacing matches in a Text */
 @Environment(EnvType.CLIENT)
@@ -35,7 +34,7 @@ public class ReplaceFilter implements IFilter {
         try {
             node = new InputNodeBuilder(replaceTo).build();
         } catch (NodeException e) {
-            AdvancedChatFilters.LOGGER.log(Level.WARN, "Error setting up replace filter.", e);
+            AdvancedChatFilters.LOGGER.warn("Error setting up replace filter.", e);
             node = new LiteralNode(replaceTo);
         }
         this.replaceTo = node;

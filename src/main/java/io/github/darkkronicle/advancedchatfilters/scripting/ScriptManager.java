@@ -177,7 +177,7 @@ public class ScriptManager implements IMessageFilter {
                 text = filter.execute(engine, text);
             } catch (Exception e) {
                 // TODO better error handling
-                e.printStackTrace();
+                AdvancedChatFilters.LOGGER.warn("Couldn't run JS filter.", e);
             }
         }
         return Optional.of(text);

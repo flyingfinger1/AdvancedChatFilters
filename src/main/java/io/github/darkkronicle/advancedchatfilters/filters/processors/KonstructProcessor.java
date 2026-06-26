@@ -18,7 +18,6 @@ import io.github.darkkronicle.advancedchatfilters.FiltersHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -62,7 +61,7 @@ public class KonstructProcessor implements IMatchProcessor, IJsonApplier, IScree
         try {
             node = new NodeBuilder(content.config.getStringValue()).build();
         } catch (NodeException e) {
-            AdvancedChatFilters.LOGGER.log(Level.ERROR, "Problem setting up Konstruct processor.", e);
+            AdvancedChatFilters.LOGGER.error("Problem setting up Konstruct processor.", e);
             node = null;
         }
     }

@@ -23,6 +23,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import io.github.darkkronicle.advancedchatfilters.AdvancedChatFilters;
 import io.github.darkkronicle.advancedchatfilters.interfaces.IScript;
 import lombok.Getter;
 import lombok.Setter;
@@ -130,7 +131,7 @@ public class ScriptFilter implements IScript<Component>, Comparable<ScriptFilter
         try (FileInputStream stream = new FileInputStream(file)) {
             code = IOUtils.toString(stream, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            AdvancedChatFilters.LOGGER.warn("Couldn't read JS filter file.", e);
             return null;
         }
         return new ScriptFilter(name, code);
@@ -148,7 +149,7 @@ public class ScriptFilter implements IScript<Component>, Comparable<ScriptFilter
         try {
             init(engine);
         } catch (NoSuchMethodException | ScriptException e) {
-            e.printStackTrace();
+            AdvancedChatFilters.LOGGER.warn("Couldn't initialise JS filter.", e);
             return false;
         }
         getActive().setBooleanValue(active);
