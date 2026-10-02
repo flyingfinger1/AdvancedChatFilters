@@ -126,12 +126,12 @@ public class GuiAdvancedFilterManager
             if (this.type == ButtonListener.Type.BACK) {
                 parent.back();
             } else if (this.type == Type.OPEN_FOLDER) {
-                Util.getPlatform()
-                        .openFile(
-                                FileUtils.getConfigDirectoryAsPath()
-                                        .resolve("advancedchat")
-                                        .resolve("filters")
-                                        .toFile());
+                // 26.3: Util.getPlatform().openFile(File) is gone; the OS file-open is now
+                // com.mojang.blaze3d.Blaze3D.openPath(Path).
+                com.mojang.blaze3d.Blaze3D.openPath(
+                        FileUtils.getConfigDirectoryAsPath()
+                                .resolve("advancedchat")
+                                .resolve("filters"));
             }
         }
 

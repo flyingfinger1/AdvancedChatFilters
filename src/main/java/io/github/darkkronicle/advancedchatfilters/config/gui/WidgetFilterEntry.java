@@ -18,7 +18,7 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.KeyCodes;
+import fi.dy.masa.malilib.util.input.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.advancedchatcore.config.gui.widgets.WidgetIntBox;
 import io.github.darkkronicle.advancedchatcore.util.Colors;
@@ -244,7 +244,7 @@ public class WidgetFilterEntry extends WidgetListEntryBase<Filter> {
     @Override
     protected boolean onKeyTypedImpl(KeyEvent keyEvent) {
         if (this.num != null && this.num.isFocused()) {
-            if (keyEvent.key() == KeyCodes.KEY_ENTER) {
+            if (keyEvent.key() == KeyCodes.KEY_RETURN) {
                 this.num.textField().getApply().run();
                 return true;
             } else {
