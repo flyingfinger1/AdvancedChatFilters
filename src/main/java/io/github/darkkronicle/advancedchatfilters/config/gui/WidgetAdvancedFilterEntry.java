@@ -7,6 +7,7 @@
  */
 package io.github.darkkronicle.advancedchatfilters.config.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.ButtonOnOff;
@@ -17,7 +18,6 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.input.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.advancedchatcore.config.gui.widgets.WidgetIntBox;
 import io.github.darkkronicle.advancedchatcore.util.Colors;
@@ -210,7 +210,7 @@ public class WidgetAdvancedFilterEntry extends WidgetListEntryBase<ScriptFilter>
     @Override
     protected boolean onKeyTypedImpl(KeyEvent keyEvent) {
         if (this.num != null && this.num.isFocused()) {
-            if (keyEvent.key() == KeyCodes.KEY_RETURN) {
+            if (keyEvent.input() == InputConstants.KEY_RETURN) {
                 this.num.textField().getApply().run();
                 return true;
             } else {
